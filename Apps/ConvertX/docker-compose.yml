@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     expose:
       - 3000
-    user: 0:0
+    user: "0:0"
     environment:
       - PUID=0
       - PGID=0
@@ -31,7 +31,7 @@ services:
       test: ["CMD", "wget", "--spider", "--tries=1", "http://localhost:3000/"]
       interval: 30s
       timeout: 10s
-      retires: 3
+      retries: 3
       start_period: 60s
 
 x-casaos:

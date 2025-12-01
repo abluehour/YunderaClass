@@ -1,0 +1,38 @@
+# docker-compose.yml
+services:
+  convertx:
+    image: ghcr.io/c4illin/convertx
+    container_name: convertx
+    restart: unless-stopped
+    expose:
+      - 3000
+    user: 0:0
+    enviromment:
+      - PUID = 0
+      - PGID = 0
+      - JWT_SECRET=$default_pwd
+      - ACCOUNT_REGISTRATION = false
+      - HTTP_ALLOWED=true
+      - ALLOW_UNAUTHENTICATED=false
+      - ALLOW_UNAUTHENTICATED=24
+    deploy:
+      resources:
+        limite:
+        memory: 2G
+        cpus: '1.0'
+    ports:
+      - "3000:3000"
+    environment:
+      - JWT_SECRET=aLongAndSecretStringUsedToSignTheJSONWebToken1234 # will use randomUUID() if unset
+      # - HTTP_ALLOWED=true # uncomment this if accessing it over a non-https connection
+    volumes:
+      - /DATA/Appdata/$AppID/data:/app/data
+      - /DATA/Downloads:/downloads:ro
+      - /DATA/Documents:/documents:ro
+
+    healthcheck: 
+    test: ["CND","wget","--spider","--tries=1","https://localhost:3000/"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 60s

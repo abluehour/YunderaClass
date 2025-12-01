@@ -6,14 +6,12 @@
 # 🎯 특별 학습 포인트: Root 권한이 필요한 특수 케이스!
 # ============================================================================
 
-name: __________(1)__________
-
+name: ConvertX
 services:
   convertx:
     # 🔍 힌트: GitHub Container Registry 이미지, v0.14.1 버전
     #          형식: ghcr.io/작성자/이미지이름:버전
-    image: __________(2)__________
-    
+    image: ghcr.io/c4illin/convertx:v0.14.1
     container_name: convertx
     restart: unless-stopped
     
@@ -21,24 +19,24 @@ services:
     #          ConvertX는 SQLite 데이터베이스 권한 문제로 root 필요
     #          일반적으로는 $PUID:$PGID를 사용하지만, 이 앱은 예외!
     #          rationale.md 파일에 이유를 설명해야 함
-    user: "__________(3)__________"
+    user: "0:0"
     
     deploy:
       resources:
         limits:
           # 🔍 힌트: 파일 변환은 메모리를 많이 사용
           #          G 단위로 지정 (예: 2G)
-          memory: __________(4)__________
+          memory: 2G
           cpus: '1.0'
     
     # 🔍 힌트: 웹 UI 포트는 3000
-    ____(5)____:
-      - __________(6)__________
+    expose:
+      - 3000
     
     environment:
       # 🔍 힌트: Root로 실행하므로 PUID/PGID도 0으로 설정
-      - PUID=__________(7)__________
-      - PGID=__________(8)__________
+      - PUID=0
+      - PGID=0
       - JWT_SECRET=$default_pwd
       - ACCOUNT_REGISTRATION=false
       - HTTP_ALLOWED=true
@@ -51,8 +49,8 @@ services:
       
       # 🔍 힌트: 변환할 파일을 읽어올 위치 (읽기 전용)
       #          :ro를 붙여서 읽기 전용으로 마운트
-      - /DATA/Downloads:/downloads:__________(9)__________
-      - /DATA/Documents:/documents:__________(10)__________
+      - /DATA/Downloads:/downloads:r
+      - /DATA/Documents:/documents:ro
     
     healthcheck:
       test: ["CMD", "wget", "--spider", "--tries=1", "http://localhost:3000/"]
@@ -78,7 +76,7 @@ x-casaos:
   author: CasaOS Team
   
   # 🔍 힌트: 유틸리티 도구
-  category: __________(11)__________
+  category: Utilities
   
   developer: C4illin
   
@@ -131,12 +129,12 @@ x-casaos:
   index: /
   
   # 🔍 힌트: expose한 포트와 일치
-  webui_port: __________(12)__________
+  webui_port: 3000
   
   # 🔍 힌트: name과 동일
-  store_app_id: __________(13)__________
+  store_app_id: ConvertX
   
-  is_uncontrolled: __________(14)__________
+  is_uncontrolled: false
 
 # ============================================================================
 # 📝 rationale.md 파일 내용 (참고용)
